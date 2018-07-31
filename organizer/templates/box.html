@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block content %}
+{% load staticfiles %}
+<script src="{% static 'test.js' %}"></script>
+
+<div id="root" class="boxes central_area">
+    <h1 id="title">{% if user.is_authenticated %}
+            Welcome {{ user.username }}
+        {% else %}
+            Welcome to <br>Organizer
+        {% endif %}
+    </h1>
+    <div id="body">
+        {% if user.is_authenticated %}
+            Click <a href="{% url 'index' %}"><u>here</u></a> to view your week<br><br>
+        {% else %}  
+            This app is currently under development but for now there are a few cool things that you can do
+            <button onclick="clickme()">button</button>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

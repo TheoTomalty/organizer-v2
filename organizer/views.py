@@ -3,4 +3,4 @@ from django.shortcuts import render
 
 class TestView(View):
     def get(self, request):
-        return render(request, "test.html")
+        return render(request, "box.html")

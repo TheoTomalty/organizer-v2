@@ -16,7 +16,7 @@ ROOT_URLCONF = "organizer.urls"
 # Database
 import dj_database_url
 DATABASES = {
-	'default': dj_database_url.config()
+    'default': dj_database_url.config()
 }
 
 # Templates
@@ -28,8 +28,8 @@ TEMPLATES = [
 ]
 
 # Static files
-STATIC_URL = '/static/'
+STATIC_URL = '/build/'
 STATIC_ROOT = 'staticfiles'
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "organizer/static"),
+    os.path.join(BASE_DIR, "build"),
 ]
