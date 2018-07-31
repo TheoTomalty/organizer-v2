@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+	<meta charset="UTF-8">
+	{% load staticfiles %}
+	<link rel="stylesheet" href="{% static 'style.css' %}" type="text/css">
+	<title>{% block title %}Organizer{% endblock %}</title>
+</head>
+<body>
+
+	<div class="boxes top_buttons left">
+		<a href="{% url 'index' %}">Home</a> | <a href="{% url 'index' %}">Log out</a>{% block back_buttons %}{% endblock %}
+	</div>
+	
+	{% if user.is_authenticated %}
+		{% block buttons %}{% endblock %}
+	{% else %}
+		<div class="boxes top_buttons right">
+			<a href="{% url 'index' %}">Create an account</a> |
+			<a href="{% url 'index' %}">Log in</a>
+		</div>
+	{% endif %}
+	
+	
+	{% block content %}{% endblock %}
+
+</body>	
+</html>

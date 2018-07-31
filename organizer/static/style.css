@@ -1,0 +1,213 @@
+a:link {
+	color:black;
+	text-decoration:none;
+}
+
+a:visited {
+	color:black;
+}
+
+a:hover {
+	color:#555;
+}
+
+a:active {
+	color:#777;
+}
+
+ul {
+	padding-left: 21px;
+	list-style-type: circle;
+}
+
+table {
+	table-layout: fixed;
+	border-collapse:collapse;
+}
+
+td {
+	vertical-align: top;
+	overflow: auto;
+	text-overflow: ellipsis;
+	padding: 4px;
+}
+
+body {
+	font-family: "Helvetica Neue";
+	font-weight: 200;
+	background-color: #EEE;
+}
+
+
+#event {
+	color: blue;
+}
+
+#event:hover {
+	color: #00C;
+}
+
+#event:active {
+	color: #00A;
+}
+
+#deadline {
+	color: red;
+}
+
+#deadline:hover {
+	color: #C00;
+}
+
+#deadline:active {
+	color: #A00;
+}
+
+#progression {
+	color: green;
+}
+
+#progression:hover {
+	color: #060;
+}
+
+#progression:active {
+	color: #050;
+}
+
+#routine {
+	color: #F09800;
+}
+
+#routine:hover {
+	color: #DB8B00;
+}
+
+#routine:active {
+	color: #C98000;
+}
+
+
+#strikethrough {
+	text-decoration: line-through;
+}
+
+
+h1 {
+	font-size: 40px;
+	font-weight: 300;
+	font-family: "Helvetica Neue";
+	text-align: center;
+}
+
+.boxes {
+	background-color: #CCC;
+	border: 1px solid black;
+	border-radius: 4px;
+}
+
+.boxes.top_buttons {
+	position: absolute;
+	text-align: center;
+	padding: 3px;
+}
+
+.boxes.top_buttons.left {
+	left: 8px;
+}
+
+.boxes.top_buttons.right {
+	right: 8px;
+}
+
+.boxes.central_area {
+	width: 500px;
+	padding: 0px 25px 25px 25px;
+
+	position: absolute;
+	top: 20%;
+	left: 0;
+	right: 0;
+
+	margin: auto;
+}
+
+
+#week_parent_box {
+	width: 85%;
+	height: 75%;
+	
+	position: absolute;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 5%;
+	
+	margin: auto;
+}
+
+.boxes.day {
+	width: 15%;
+	
+	position: absolute;
+	top: 0;
+	left: 0;
+	bottom: -40px;
+}
+
+.boxes.week_top {
+	width: 83.75%;
+	padding-top: 2px;
+	padding-bottom: 4px;
+	
+	position: absolute;
+	top: 0;
+	right:0;
+}
+
+.boxes.week_center {
+	width: 83.75%;
+	height: 100%;
+	border: 0px solid black;
+	
+	position: absolute;
+	top: 40px;
+	right: 1px;
+
+}
+
+#table_today {
+	width: 100%;
+	height: 100%;
+}
+
+#table_days {
+	width: 100%;
+	height: 100%;
+}
+
+#table_header {
+	width: 100%;
+}
+
+.table_days_cell {
+	border: 1px solid black;
+}
+
+#lots {
+	
+}
+
+#little {
+	background-color: #AAA;
+	border: 1px solid black;
+}
+
+#none {
+	background-color: #888;
+	border: 1px solid black;
+}
+
+.error {
+	color: red;
+}
