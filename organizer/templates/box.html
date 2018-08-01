@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
 {% load staticfiles %}
-<script src="{% static 'test.js' %}"></script>
+<script>
+    window.context = {{ context | safe}};
+</script>
 
 <div id="root" class="boxes central_area">
     <h1 id="title">{% if user.is_authenticated %}
@@ -19,4 +21,8 @@
         {% endif %}
     </div>
 </div>
+
+
+<script src="{% static 'forms.js' %}"></script>
+
 {% endblock %}
