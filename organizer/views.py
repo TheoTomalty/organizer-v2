@@ -1,10 +1,10 @@
 from django.views.generic import View
 from django.shortcuts import render
-from organizer.forms import Form
-import re
+from organizer.forms import Form, FormManager
 
-def LogForm(name):
-    return Form(name, {
+class Home(View):
+    def get(self, request):
+        log_form = {
             'username': {
                 'type': 'text',
                 'label': 'Username',
@@ -13,16 +13,16 @@ def LogForm(name):
                 'type': 'text',
                 'label': 'Password',
             },
-        })
+        }
 
-class TestView(View):
-    def get(self, request):
-        form = LogForm('sign_in')
+        sign_up = Form('sign_up', log_form)
+        sign_in = Form('sign_up', log_form)
         
-        return render(request, "box.html", {'context':form.html})
+        context = FormManager(sign_up, sign_in).window_context
+        
+        return render(request, "login.html", {'context':context})
     
-    #def post(self, request):
-    #    print(request.body)
-    #    form = LogForm(request.POST)
-    #    
-    #    return self.get(request)
+    def post(self, request):
+        print(request.body)
+        
+        return self.get(request)

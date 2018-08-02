@@ -1,4 +1,5 @@
 from django import forms
+import json
 import re
 
 class NoSuchField(Exception):
@@ -101,10 +102,6 @@ class FormMeta(object):
         )
     
 class Form(object):
-    #def __new__(cls, name, fields):
-    #    custom_form_class = FormMeta(name, fields).get_class()
-    #    return custom_form_class()
-    
     def __init__(self, name, fields):
         self.prototype = FormMeta(name, fields).get_class()()
 
@@ -116,3 +113,21 @@ class Form(object):
     @property
     def html(self):
         return re.sub(r'</p>\n<p>', '<br/>', self.as_p())
+
+class FormManager(object):
+    def __init__(self, *args):
+        for arg in args:
+            if isinstance(arg, Form):
+                continue
+            else:
+                raise Exception("Invalid form type passed to the FormManager")
+        
+        self.forms = args
+    
+    @property
+    def window_context(self):
+        obj = {}
+        for form in self.forms:
+            obj[form.name] = form.html
+        
+        return json.dumps(obj)

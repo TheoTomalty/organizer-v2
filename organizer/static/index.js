@@ -1,4 +1,6 @@
-import { Parser } from 'html-to-react';
+import { LoginInterface } from './login.js';
+
+
 
 //class TextField extends React.Component {
 //    render () {
@@ -32,10 +34,3 @@ import { Parser } from 'html-to-react';
 //    }
 //}
 
-let htmlToReactParser = new Parser();
-let reactElement = htmlToReactParser.parse(window.context);
-
-ReactDOM.render(
-    reactElement,
-    document.getElementById('body')
-);

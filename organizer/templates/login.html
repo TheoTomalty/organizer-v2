@@ -2,7 +2,7 @@
 {% block content %}
 {% load staticfiles %}
 <script>
-    window.context = '{{ context | safe}}';
+    window.context = {{ context | safe}};
 </script>
 
 <div id="root" class="boxes central_area">
@@ -23,6 +23,6 @@
 </div>
 
 
-<script src="{% static 'forms.js' %}"></script>
+<script src="{% static 'login.js' %}"></script>
 
 {% endblock %}
