@@ -10,13 +10,13 @@ class Home(View):
                 'label': 'Username',
             },
             'password': {
-                'type': 'text',
+                'type': 'password',
                 'label': 'Password',
             },
         }
 
         sign_up = Form('sign_up', log_form)
-        sign_in = Form('sign_up', log_form)
+        sign_in = Form('sign_in', log_form)
         
         context = FormManager(sign_up, sign_in).window_context
         

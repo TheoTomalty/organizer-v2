@@ -24,7 +24,7 @@ class FormMeta(object):
         return type('CustomForm', (forms.Form,), self.class_dict)
     
     def add_field(self, name, arg):
-        allowed = ('text', 'choice', 'bool', 'date')
+        allowed = ('text', 'choice', 'bool', 'date', 'password')
 
         if 'type' in arg:
             type = arg['type']
@@ -61,13 +61,21 @@ class FormMeta(object):
             if (key not in required and key not in non_essential) and key != 'type':
                 raise Exception('Field argument not recognized: {}'.format(key))
 
-    def create_text(self, name, argument):
+    def create_text(self, name, argument, password=False):
         FormMeta.check_args(argument, (), {'label': name, 'initial': '', 'required': True})
 
         self.create_field(
             name,
-            forms.CharField(label=argument['label'], initial=argument['initial'], required=argument['required']),
+            forms.CharField(
+                label=argument['label'],
+                initial=argument['initial'],
+                required=argument['required'],
+                widget=(forms.PasswordInput() if password else None),
+            ),
         )
+    
+    def create_password(self, name, argument):
+        self.create_text(name, argument, password=True)
 
     def create_choice(self, name, argument):
         FormMeta.check_args(argument, ('choices'), {'label': name, 'required': False})

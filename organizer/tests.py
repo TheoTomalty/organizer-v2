@@ -23,6 +23,11 @@ class TestForm(unittest.TestCase):
                 'type': 'date',
                 'label': 'Date',
             },
+            'password': {
+                'type': 'password',
+                'label': 'Pass',
+                'initial': 'test again',
+            }
         }
 
         Form('form1', fields)
