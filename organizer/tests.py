@@ -1,3 +1,6 @@
+import django
+django.setup()
+
 from organizer.forms import *
 from django.forms import Form as djForm
 from django.forms import Field
