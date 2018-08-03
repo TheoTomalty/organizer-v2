@@ -2,3 +2,4 @@
 node_modules
 build
 dist
+.pytest_cache

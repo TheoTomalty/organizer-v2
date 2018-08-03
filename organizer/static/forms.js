@@ -23,10 +23,25 @@ export class FormBody extends React.Component {
         this.processPOST = this.processPOST.bind(this);
         this.handleChange = this.handleChange.bind(this);
         this.processChild = this.processChild.bind(this);
+        //this.onLoad = this.onLoad.bind(this);
+    }
+    
+    static onLoad() {
+        console.log('Recieved load')
     }
     
     processPOST() {
-        console.log(this.state);
+        let http = new XMLHttpRequest();
+        http.open('POST', '/', true);
+        
+        // Create message
+        let message = 'name=' + this.props.name;
+        for (let key in this.state) {
+            message +=  '&' + key + '=' + this.state[key]
+        }
+        
+        http.onload = FormBody.onLoad;
+        http.send(message);
     }
     
     handleChange(event) {
@@ -53,7 +68,7 @@ export class FormBody extends React.Component {
     
     render() {
         return (
-            <form>
+            <form method="post">
                 <FormRaw name={this.props.name} componentParser={this.processChild}/>
                 <button onClick={this.processPOST}>
                     Sign In

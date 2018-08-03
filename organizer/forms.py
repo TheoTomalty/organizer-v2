@@ -2,18 +2,27 @@ from django import forms
 import json
 import re
 
-class NoSuchField(Exception):
-    def __init__(self, message="The item passed is not a Django Field"):
-        super().__init__(self, message)
+class NotDjangoField(Exception):
+    pass
 
 
 class InvalidName(Exception):
-    def __init__(self, message="The name of this field is not a string"):
-        super().__init__(self, message)
+    pass
 
+class NoType(Exception):
+    pass
+
+class TooFewFields(Exception):
+    pass
+
+class UnexpectedField(Exception):
+    pass
+
+class InconsistentType(Exception):
+    pass
 
 class FormMeta(object):
-    def __init__(self, name, fields):
+    def __init__(self, fields):
         ''' Creates a class that inherits django forms, and returns an instance. '''
         self.class_dict = {}
         
@@ -30,36 +39,41 @@ class FormMeta(object):
             type = arg['type']
             if type in allowed:
                 getattr(self, 'create_' + type).__call__(name, arg)
+            else:
+                raise NotImplementedError('The type {} is not implemented'.format(type))
         else:
-            raise Exception('No type parameter for this field.')
+            raise NoType('You must specify a type parameter in your description: {}'.format(arg))
 
     def create_field(self, name, field):
         if isinstance(field, forms.Field):
             if isinstance(name, str):
                 self.class_dict[name] = field
             else:
-                raise InvalidName()
+                raise InvalidName("The name of this field is not a string: {}".format(name))
         else:
-            raise NoSuchField()
+            raise NotDjangoField("The item passed is not a Django Field: {}".format(field))
 
     @staticmethod
     def check_args(argument, required, non_essential):
         for name in required:
             if name not in argument:
-                raise Exception('Missing field argument: {}'.format(name))
+                raise TooFewFields('Missing field argument {0} in dict: {1}'.format(name, argument))
 
         for key in non_essential:
             if key in argument:
                 if isinstance(argument[key], type(non_essential[key])):
                     continue
                 else:
-                    raise Exception('Field argument {0} does not take type: {1}'.format(key, type(argument[key])))
+                    raise InconsistentType('The default type {1} of field argument {0} \
+                    is inconsistent with the value passed: {2}'.format(key, 
+                                                                       type(argument[key]), 
+                                                                       argument[key]))
             else:
                 argument[key] = non_essential[key]
 
         for key in argument:
             if (key not in required and key not in non_essential) and key != 'type':
-                raise Exception('Field argument not recognized: {}'.format(key))
+                raise UnexpectedField('Field argument not recognized: {0}'.format(key))
 
     def create_text(self, name, argument, password=False):
         FormMeta.check_args(argument, (), {'label': name, 'initial': '', 'required': True})
@@ -78,7 +92,7 @@ class FormMeta(object):
         self.create_text(name, argument, password=True)
 
     def create_choice(self, name, argument):
-        FormMeta.check_args(argument, ('choices'), {'label': name, 'required': False})
+        FormMeta.check_args(argument, ('choices',), {'label': name, 'required': False})
 
         CHOICES = []
         for key in argument['choices']:
@@ -111,12 +125,17 @@ class FormMeta(object):
     
 class Form(object):
     def __init__(self, name, fields):
-        self.prototype = FormMeta(name, fields).get_class()()
-
+        self.prototype = FormMeta(fields).get_class()()
         self.name = name
     
     def __getattr__(self, item):
-        return getattr(self.prototype, item)
+        try:
+            return getattr(self.prototype, item)
+        except AttributeError:
+            return self.prototype.declared_fields[item]
+    
+    def __getitem__(self, item):
+        return self.prototype.declared_fields[item]
     
     @property
     def html(self):
@@ -128,9 +147,14 @@ class FormManager(object):
             if isinstance(arg, Form):
                 continue
             else:
-                raise Exception("Invalid form type passed to the FormManager")
+                raise TypeError("FormManager takes arguments of type Form")
         
         self.forms = args
+    
+    def __getitem__(self, item):
+        for name, form in zip((f.name for f in self.forms), self.forms):
+            if name == item:
+                return form
     
     @property
     def window_context(self):
@@ -139,3 +163,6 @@ class FormManager(object):
             obj[form.name] = form.html
         
         return json.dumps(obj)
+    
+    def post(self, query_dict):
+        self[query_dict['name']].post(query_dict)

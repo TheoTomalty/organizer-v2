@@ -15,9 +15,12 @@ ROOT_URLCONF = "organizer.urls"
 
 # Database
 import dj_database_url
-DATABASES = {
-    'default': dj_database_url.config()
-}
+import sys
+DATABASES = {'default': (
+    dj_database_url.config() if 'test' not in sys.argv else {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': 'mydatabase'
+})}
 
 # Templates
 TEMPLATES = [
