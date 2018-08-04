@@ -127,6 +127,8 @@ class Form(object):
         self.cls = self.meta.get_class()
         self.prototype = self.cls()
         self.name = name
+        
+        self.manager = None
     
     def __getattr__(self, item):
         try:
@@ -172,11 +174,10 @@ class Form(object):
     def field_names(self):
         return (key for key in self.meta.class_dict)
     
-    @property
     def clean_data(self):
         obj = {}
         for key in self.field_names:
-            obj[key] = self[key].clean_data()
+            obj[key] = self.cleaned_data[key]
         
         return obj
 
@@ -189,6 +190,8 @@ class FormManager(object):
                 raise TypeError("FormManager takes arguments of type Form")
         
         self.forms = args
+        for form in self.forms:
+            form.manager = self
     
     def __getitem__(self, item):
         for name, form in zip((f.name for f in self.forms), self.forms):

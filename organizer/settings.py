@@ -7,7 +7,11 @@ TEMPLATE_DEBUG = True
 ALLOWED_HOSTS = ['organizer.theo.tomalty.com', 'localhost']
 SECRET_KEY = 'l=l4zuuyp@x(*)ki)vo6q0n%$hw@$b93b7jhe8!ajabf(*kv=e'
 
-INSTALLED_APPS = ['django.contrib.staticfiles']
+INSTALLED_APPS = [
+    'django.contrib.staticfiles',
+	'django.contrib.contenttypes',
+    'django.contrib.auth',
+]
 
 # Pointing to files/directories
 BASE_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), os.path.pardir)

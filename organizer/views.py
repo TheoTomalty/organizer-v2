@@ -1,5 +1,8 @@
 from django.views.generic import View
 from django.shortcuts import render
+from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User
+
 from organizer.forms import Form, FormManager
 
 log_form = {
@@ -18,8 +21,16 @@ class SignInForm(Form):
         super().__init__(name, log_form)
     
     def post_valid(self, request):
-        from django.http.response import HttpResponse
-        return HttpResponse(status=200)
+        data = self.clean_data()
+        user = authenticate(request, **data)
+        
+        if user is not None:
+            login(request, user)
+            return render(request, 'login.html', {'context':self.manager.window_context})
+        else:
+            from django.http.response import HttpResponse
+            return HttpResponse(status=401)
+        
 
 sign_up = Form('sign_up', log_form)
 sign_in = SignInForm('sign_in')
