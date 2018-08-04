@@ -13,8 +13,16 @@ log_form = {
     },
 }
 
+class SignInForm(Form):
+    def __init__(self, name):
+        super().__init__(name, log_form)
+    
+    def post_valid(self, request):
+        from django.http.response import HttpResponse
+        return HttpResponse(status=200)
+
 sign_up = Form('sign_up', log_form)
-sign_in = Form('sign_in', log_form)
+sign_in = SignInForm('sign_in')
 
 log_manager = FormManager(sign_up, sign_in)
 
@@ -23,6 +31,4 @@ class Home(View):
         return render(request, "login.html", {'context':log_manager.window_context})
     
     def post(self, request):
-        log_manager.post(request)
-        
-        return self.get(request)
+        return log_manager.post(request)

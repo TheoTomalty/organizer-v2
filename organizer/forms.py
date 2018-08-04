@@ -1,14 +1,10 @@
-import copy
-
-from django import forms
 import json
 import re
 
+from django import forms
+from django.http.response import HttpResponse
+
 class NotDjangoField(Exception):
-    pass
-
-
-class InvalidName(Exception):
     pass
 
 class NoType(Exception):
@@ -51,7 +47,7 @@ class FormMeta(object):
             if isinstance(name, str):
                 self.class_dict[name] = field
             else:
-                raise InvalidName("The name of this field is not a string: {}".format(name))
+                raise NameError("The name of this field is not a string: {}".format(name))
         else:
             raise NotDjangoField("The item passed is not a Django Field: {}".format(field))
 
@@ -127,7 +123,9 @@ class FormMeta(object):
     
 class Form(object):
     def __init__(self, name, fields):
-        self.prototype = FormMeta(fields).get_class()()
+        self.meta = FormMeta(fields)
+        self.cls = self.meta.get_class()
+        self.prototype = self.cls()
         self.name = name
     
     def __getattr__(self, item):
@@ -142,6 +140,45 @@ class Form(object):
     @property
     def html(self):
         return re.sub(r'</p>\n<p>', '<br/>', self.as_p())
+    
+    def post_valid(self, request):
+        raise NotImplementedError('The method post_valid should be overloaded in the child class')
+    
+    def post_invalid(self, request):
+        raise NotImplementedError('The method post_invalid should be overloaded in the child class')
+    
+    def post(self, request):
+        # Convert QueryDict to a dictionary with no name attribute
+        fields = {}
+        for key, value in request.POST.items():
+            if key != 'name':
+                fields[key] = value
+        
+        # Update prototype
+        self.prototype = self.cls(fields)
+        
+        # Handle correct case
+        if self.prototype.is_valid():
+            return self.post_valid(request)
+        # Handle incorrect case
+        try:
+            response = self.post_invalid(request)
+        except NotImplementedError:
+            response = HttpResponse(status=400)
+        
+        return response
+    
+    @property
+    def field_names(self):
+        return (key for key in self.meta.class_dict)
+    
+    @property
+    def clean_data(self):
+        obj = {}
+        for key in self.field_names:
+            obj[key] = self[key].clean_data()
+        
+        return obj
 
 class FormManager(object):
     def __init__(self, *args):
@@ -166,5 +203,10 @@ class FormManager(object):
         
         return json.dumps(obj)
     
-    def post(self, query_dict):
-        self[query_dict['name']].post(query_dict)
+    def post(self, request):
+        # Call the post method of the correct form
+        form = self[request.POST['name']]
+        if form is not None:
+            return self[request.POST['name']].post(request)
+        
+        raise NameError('The name field of this post request does not match a loaded form')
