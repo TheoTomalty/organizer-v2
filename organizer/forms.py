@@ -1,3 +1,5 @@
+import copy
+
 from django import forms
 import json
 import re
@@ -30,7 +32,7 @@ class FormMeta(object):
             self.add_field(key, fields[key])
     
     def get_class(self):
-        return type('CustomForm', (forms.Form,), self.class_dict)
+        return type('CustomForm', (forms.Form,), dict(self.class_dict))
     
     def add_field(self, name, arg):
         allowed = ('text', 'choice', 'bool', 'date', 'password')

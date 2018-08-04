@@ -1,4 +1,5 @@
 import { Parser } from 'html-to-react';
+import React from 'react';
 
 class FormRaw extends React.Component {
     constructor(props) {
