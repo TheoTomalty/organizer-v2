@@ -18,10 +18,25 @@ class TestClient(object):
         c = Client()
         url = '/'
         
-        response_unauth = c.post(url, {'name':'sign_in', 'username':'test', 'password':'pass'})
+        response_unauth = c.post(url, {'name':'sign_in', 'username':'unauth', 'password':'pass'})
         assert response_unauth.status_code == 401, 'Should have raised unauthorized response >> response: {0}'.format(response_unauth)
         
         response_invalid = c.post(url, {'name': 'sign_in', 'test':'test'})
         assert response_invalid.status_code == 400, 'Bad form should have given HTTP400 error >> response: {0}'.format(response_invalid)
         
         pytest.raises(NameError, c.post, url, {'name':'test'})
+    
+    def test_post_signup(self):
+        c = Client()
+        url = '/'
+        
+        # Create User
+        response_create = c.post(url, {'name':'sign_up', 'username':'test', 'password':'pass'})
+        assert response_create.status_code == 200
+        
+        # Check that user exists
+        response_login = c.post(url, {'name':'sign_in', 'username':'test', 'password':'pass'})
+        assert response_login.status_code == 200
+        
+        # Try to create andother user
+        pytest.raises(NotImplementedError, c.post, url, {'name': 'sign_up', 'username': 'test', 'password': 'pass'})

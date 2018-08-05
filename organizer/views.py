@@ -1,5 +1,6 @@
 from django.views.generic import View
 from django.shortcuts import render
+from django.conf import settings
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 
@@ -30,9 +31,23 @@ class SignInForm(Form):
         else:
             from django.http.response import HttpResponse
             return HttpResponse(status=401)
-        
 
-sign_up = Form('sign_up', log_form)
+class SignUpForm(Form):
+    def __init__(self, name):
+        super().__init__(name, log_form)
+
+    def post_valid(self, request):
+        data = self.clean_data()
+
+        if User.objects.filter(username=data['username']).exists():
+            raise NotImplementedError('Must implement form error handling')
+        else:
+            user = User.objects.create_user(**data)
+            user.backend = settings.AUTHENTICATION_BACKENDS[0]
+            login(request, user)
+            return render(request, 'login.html', {'context':self.manager.window_context})
+
+sign_up = SignUpForm('sign_up')
 sign_in = SignInForm('sign_in')
 
 log_manager = FormManager(sign_up, sign_in)
