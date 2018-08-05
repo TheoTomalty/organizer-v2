@@ -143,10 +143,10 @@ class Form(object):
     def html(self):
         return re.sub(r'</p>\n<p>', '<br/>', self.as_p())
     
-    def post_valid(self, request):
+    def post_valid(self, request, form):
         raise NotImplementedError('The method post_valid should be overloaded in the child class')
     
-    def post_invalid(self, request):
+    def post_invalid(self, request, form):
         raise NotImplementedError('The method post_invalid should be overloaded in the child class')
     
     def post(self, request):
@@ -156,15 +156,15 @@ class Form(object):
             if key != 'name':
                 fields[key] = value
         
-        # Update prototype
-        self.prototype = self.cls(fields)
+        # DO NOT UPDATE PROTOTYPE
+        form = self.cls(fields)
         
         # Handle correct case
-        if self.prototype.is_valid():
-            return self.post_valid(request)
+        if form.is_valid():
+            return self.post_valid(request, form)
         # Handle incorrect case
         try:
-            response = self.post_invalid(request)
+            response = self.post_invalid(request, form)
         except NotImplementedError:
             response = HttpResponse(status=400)
         
@@ -174,10 +174,10 @@ class Form(object):
     def field_names(self):
         return (key for key in self.meta.class_dict)
     
-    def clean_data(self):
+    def clean_data(self, form):
         obj = {}
         for key in self.field_names:
-            obj[key] = self.cleaned_data[key]
+            obj[key] = form.cleaned_data[key]
         
         return obj
 

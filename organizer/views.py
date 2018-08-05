@@ -21,8 +21,8 @@ class SignInForm(Form):
     def __init__(self, name):
         super().__init__(name, log_form)
     
-    def post_valid(self, request):
-        data = self.clean_data()
+    def post_valid(self, request, form):
+        data = self.clean_data(form)
         user = authenticate(request, **data)
         
         if user is not None:
@@ -36,8 +36,8 @@ class SignUpForm(Form):
     def __init__(self, name):
         super().__init__(name, log_form)
 
-    def post_valid(self, request):
-        data = self.clean_data()
+    def post_valid(self, request, form):
+        data = self.clean_data(form)
 
         if User.objects.filter(username=data['username']).exists():
             raise NotImplementedError('Must implement form error handling')
